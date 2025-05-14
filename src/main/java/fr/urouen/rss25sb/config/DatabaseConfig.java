@@ -1,25 +1,42 @@
 package fr.urouen.rss25sb.config;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.sql.DataSource;
+
 @Configuration
 public class DatabaseConfig {
 
-    @Value("${POSTGRESQL_ADDON_URI:}")
+    @Value("${POSTGRESQL_ADDON_URI:jdbc:postgresql://localhost:5432/rss25sb}")
     private String postgresqlUri;
 
+    @Value("${POSTGRESQL_ADDON_USER:postgres}")
+    private String username;
+
+    @Value("${POSTGRESQL_ADDON_PASSWORD:password}")
+    private String password;
+
     @Bean
-    public String dataSourceUrl() {
-        if (postgresqlUri != null && !postgresqlUri.isEmpty()) {
-            if (postgresqlUri.startsWith("postgresql://")) {
-                return "jdbc:" + postgresqlUri;
-            } else if (!postgresqlUri.startsWith("jdbc:postgresql://")) {
-                return "jdbc:postgresql://" + postgresqlUri;
-            }
+    public DataSource dataSource() {
+        HikariConfig config = new HikariConfig();
+
+        // Corrige l'URL si nécessaire
+        String correctedUrl = postgresqlUri;
+        if (correctedUrl.startsWith("postgresql://")) {
+            correctedUrl = "jdbc:" + correctedUrl;
+        } else if (!correctedUrl.startsWith("jdbc:")) {
+            correctedUrl = "jdbc:postgresql://" + correctedUrl;
         }
-        // Valeur par défaut pour l'environnement local
-        return "jdbc:postgresql://localhost:5432/rss25sb";
+
+        config.setJdbcUrl(correctedUrl);
+        config.setUsername(username);
+        config.setPassword(password);
+        config.setDriverClassName("org.postgresql.Driver");
+
+        return new HikariDataSource(config);
     }
 }
