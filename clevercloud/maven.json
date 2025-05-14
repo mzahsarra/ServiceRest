@@ -1,7 +1,7 @@
 {
   "build": {
     "type": "maven",
-    "goal": "spring-boot:repackage -DskipTests"
+    "goal": "package -DskipTests"
   },
   "deploy": {
     "jarName": "./target/ServiceRest-0.0.1-SNAPSHOT.jar"
