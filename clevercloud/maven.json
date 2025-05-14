@@ -1,9 +1,9 @@
 {
   "build": {
     "type": "maven",
-    "goal": "package -DskipTests"
+    "goal": "spring-boot:repackage -DskipTests"
   },
   "deploy": {
-    "jarName": "./target/rss25sb-0.0.1-SNAPSHOT.jar"
+    "jarName": "./target/ServiceRest-0.0.1-SNAPSHOT.jar"
   }
 }
